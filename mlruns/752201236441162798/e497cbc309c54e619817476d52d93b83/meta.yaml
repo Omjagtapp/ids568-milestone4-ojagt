@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/omjagtap/ids568-milestone4-ojagt/mlruns/752201236441162798/e497cbc309c54e619817476d52d93b83/artifacts
+end_time: 1773790685979
+entry_point_name: ''
+experiment_id: '752201236441162798'
+lifecycle_stage: active
+run_id: e497cbc309c54e619817476d52d93b83
+run_name: Distributed_Multi_Core
+run_uuid: e497cbc309c54e619817476d52d93b83
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773790658964
+status: 3
+tags: []
+user_id: omjagtap

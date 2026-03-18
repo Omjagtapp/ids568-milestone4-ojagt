@@ -23,13 +23,15 @@ def generate_data(rows: int, output_dir: str, seed: int):
         data = {
             "user_id": np.random.randint(1, 50000, size=current_rows).astype(str),
             "amount": np.random.exponential(scale=50, size=current_rows),
-            "timestamp": pd.date_range(start='1/1/2026', periods=current_rows, freq='S'),
+            "timestamp": pd.date_range(start='1/1/2026', periods=current_rows, freq='s'),
             "category": np.random.choice(["Electronics", "Groceries", "Clothing", "Entertainment"], size=current_rows)
         }
         
         df = pd.DataFrame(data)
         file_path = os.path.join(output_dir, f"data_chunk_{i}.parquet")
-        df.to_parquet(file_path, engine='pyarrow')
+        
+        # FIXED: Coerce timestamps to microseconds (us) so PySpark doesn't crash
+        df.to_parquet(file_path, engine='pyarrow', coerce_timestamps='us', allow_truncated_timestamps=True)
         
         if i == 0:
             total_hash = compute_data_hash(df)

@@ -1,4 +1,5 @@
 # Milestone 4: Distributed & Streaming Pipeline
+[![Python CI Pipeline](https://github.com/Omjagtapp/ids568-milestone4-ojagt/actions/workflows/ci.yml/badge.svg)](https://github.com/Omjagtapp/ids568-milestone4-ojagt/actions)
 
 ## Setup Instructions
 1. Create a virtual environment: `python -m venv venv`
