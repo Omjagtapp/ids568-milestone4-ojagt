@@ -11,4 +11,4 @@
 ## 1. Data Generation
 Generate 10 million rows of reproducible synthetic data:
 ```bash
-python generate_data.py --rows 10000000 --output data/raw --seed 42
+python generate_data.py --rows 10000000 --output data/raw --seed 42   
