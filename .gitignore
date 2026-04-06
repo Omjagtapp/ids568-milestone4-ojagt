@@ -1,0 +1,31 @@
+# Generated data — never commit raw or processed datasets
+data/
+mlruns/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Spark / streaming checkpoints
+/tmp/spark_checkpoint_*
+spark-warehouse/
+
+# IDE
+.vscode/
+.idea/
