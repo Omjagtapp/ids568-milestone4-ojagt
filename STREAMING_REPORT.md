@@ -110,7 +110,52 @@ is preferable.
 
 ---
 
-## 4. Tumbling Window Design
+## 4. Failure Handling & Recovery Scenarios
+
+### Scenario A — Consumer crash mid-batch
+
+**What happens:** The executor dies after processing some events but before
+Spark commits the batch checkpoint.
+
+**Recovery:** On restart, Spark reads the last committed offset from
+`/tmp/spark_checkpoint_mlops` and re-fetches the entire un-committed batch
+from Kafka (at-least-once re-delivery).  The `dropDuplicates(["event_id"])`
+call in `process_batch` then filters out any events that were already counted
+in a previously committed window, preventing double-counting.
+
+**Data loss:** None — Kafka retains messages until the consumer commits the
+offset.
+
+### Scenario B — Consumer restart after a clean shutdown
+
+**What happens:** The process is stopped with SIGTERM (e.g., a deployment
+rollout).  Spark flushes the current batch and writes a clean checkpoint.
+
+**Recovery:** On restart the consumer resumes from the next uncommitted offset.
+No reprocessing occurs; the in-flight batch is simply re-fetched from Kafka.
+
+### Scenario C — Kafka broker restart (short outage)
+
+**What happens:** The broker becomes unavailable for < 30 s.
+
+**Recovery:** The Spark source retries the connection (default max retries = 3,
+interval = 10 s via `kafka.retry.backoff.ms`).  Once the broker recovers, the
+consumer resumes from the last committed offset with zero data loss.  Pending
+events buffered in Kafka's log are processed in the next batch.
+
+### Scenario D — Long broker outage (> watermark)
+
+**What happens:** The broker is down for > 10 s (our watermark duration).
+
+**Recovery:** Events that arrive after the watermark deadline for their window
+are dropped by Spark's late-data policy.  This is a deliberate trade-off: it
+bounds state store memory growth in exchange for dropping a small fraction of
+very-late events.  For our load test, no events were dropped under the 10 s
+watermark at load levels below the breaking point.
+
+---
+
+## 5. Tumbling Window Design
 
 The 10-second tumbling window with a 10-second watermark was chosen to:
 
